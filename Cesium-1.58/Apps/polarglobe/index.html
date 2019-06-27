@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<!-- Tell IE to use the latest, best version (or Chrome Frame if pre-IE11). -->
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<title>PolarGlobe</title>
+	<link rel="icon" type="image/png" href="icon.png" sizes="64x64" />
+
+    <!-- <script type="text/javascript" src="../../ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+	<script type="text/javascript" src="../../code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="../../cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../../cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/intro.min.js"></script> -->
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="js/intro.min.js"></script>
+	<script type="text/javascript" src="js/thirdparty/cesium_min/Cesium44.js"></script>
+	<script type="text/javascript" src="js/thirdparty/ion.rangeSlider.min.js"></script>
+	<script type="text/javascript" src="js/thirdparty/icheck.min.js"></script>
+	<script type="text/javascript" src="js/thirdparty/colorpicker/colorpicker.js"></script>
+	<script type="text/javascript" src="js/thirdparty/jquery.gradientPicker.js"></script>
+    <script type="text/javascript" src="js/guide.js"></script>
+	<script type="text/javascript" src="js/dashboard.js"></script>
+
+    <script type="text/javascript" src="../../node_modules/amcharts3/amcharts/amcharts.js"></script>
+    <script type="text/javascript" src="../../node_modules/amcharts3/amcharts/xy.js"></script>
+    <script type="text/javascript" src="../../node_modules/amcharts3/amcharts/themes/black.js"></script>
+
+	<script src="js/utils.js"></script>
+	<script src="js/PGPrimitive.js"></script>
+	<script src="js/prim/PointCloudPrimitive.js"></script>
+	<script src="js/prim/VolumeRenderingPrimitive.js"></script>
+	<script src="js/prim/VerticalProfilePrimitive.js"></script>
+	<script src="js/prim/HorizontalSectionPrimitive.js"></script>
+	<script src="js/prim/ParticleSimulationPrimitive.js"></script>
+	<script src="js/prim/StreamLinePrimitive.js"></script>
+	<script src="js/prim/GlobalWindPrimitive.js"></script>
+	<script src="js/prim/OceanCurrentPrimitive.js"></script>
+    <script type="text/javascript" src="vdata/metadata.js"></script>
+    
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="js/colorbar.js"></script>
+
+
+	<style>
+	    @import url(js/thirdparty/cesium_min_1.43/Widgets/widgets.css);
+	    @import url(css/switch.css);
+	    @import url(css/font-awesome.min.css);
+	    @import url(css/icheck/blue.css);
+	    @import url(css/ionRange/normalize.css);
+	    @import url(css/ionRange/ion.rangeSlider.css);
+	    @import url(css/ionRange/ion.rangeSlider.skinHTML5.css);
+	    @import url(css/colorpicker/css/colorpicker.css);
+	    @import url(css/jquery.gradientPicker.css);
+	    @import url(css/customize.css);
+        @import url(css/introjs.css);
+
+        .introjs-tooltiptext {
+            color: white;    
+        }
+        .introjs-helperLayer {
+            opacity: .6;    
+        }
+        .introjs-tooltip {
+            background-color: rgba(68,68,68,.7);    
+        }
+        .introjs-arrow {
+            border: 5px solid gray;    
+        }
+        .introjs-button {
+            color: white;
+            text-shadow: 1px 1px 0 #444;    
+            background-color: #0099f0;
+            background-image: linear-gradient(#00aaf4, #0088ec);    
+        }
+        .introjs-skipbutton {
+            font-weight: bold;
+            color: #f50;
+            text-shadow: none;
+        }
+        .introjs-disabled, .introjs-disabled:hover, .introjs-disabled:focus {
+            color: #9a9a9a;
+        }
+        .introjs-bullets ul li a.active, .introjs-bullets ul li a:hover {
+            background: #2af;
+        }
+	</style>
+</head>
+<body>
+	<video class="data-source" id="vdata" style="display:none"></video>
+	<img   class="data-source" id="idata" style="display:none"></img>
+    
+    <div id='about' class='fullwin-panel blur-panel' move='fromTop' hide>
+        <div class='container'>
+            <div class='title'>ABOUT</div>
+            <div class='content'>This is an NSF funded project aiming at developing state-of-the-art visualization tool to support multidimensional scientific visualization. More information can be found at: 
+            <a href="javascript:if(confirm(%27https://www.nsf.gov/awardsearch/showAward?AWD_ID=1504432&HistoricalAwards=false  \n\nThis file was not retrieved by Teleport Pro, because it is addressed using an unsupported protocol (e.g., gopher).  \n\nDo you want to open it from the server?%27))window.location=%27https://www.nsf.gov/awardsearch/showAward?AWD_ID=1504432&HistoricalAwards=false%27">NSF Grant (2015/07-2018/07): PolarGlobe: Powering up Polar Cyberinfrastructure Using M-Cube Visualization for Polar Climate Studies.</a></div>
+            <br>
+            <pre class='content'>
+Principal Investigator: 
+Dr. Wenwen Li
+School of Geographical Sciences and Urban Planning
+Arizona State University
+
+Main contributor:
+Sizhe Wang
+School of Geographical Sciences and Urban Planning
+Arizona State University
+
+For questions, please address to <a href='mailto:wenwen@asu.edu'>wenwen@asu.edu</a>
+            </pre>
+            <image style='padding:20px' src="images/asu_logo.png" height=80></img>
+            <image src="images/nsf_logo.png" height=120></img>
+        </div>
+        <a class='globe-close' onclick='$("#about").attr("hide","")'></a>
+    </div>
+
+    <div id='color-picker' class='fullwin-panel' move='fromTop' hide>
+        <div class='container'>
+            <div class='title'>Customize Color Scheme</div>
+            <div class="grad-ex"></div>
+        </div>
+        <a class='globe-close' onclick='destroyGradPicker()'></a>
+    </div>
+    
+	<div id="cesiumContainer"></div>
+
+    <div id="loader" class='fullwin-panel' style="z-index:0">
+        <div class='loader-box'>
+            <p class='text'>Data Loading</p>
+            <i class='layer'></i>
+            <i class='layer'></i>
+            <i class='layer'></i>
+        </div>
+    </div>
+
+    <div id="dataSelector">
+        <div class='util-button' target='asr'>Polar WRF</div>
+        <div class='util-button' target='gfs' default>NOAA Realtime<br>Global Forecast</div>
+        <div class='util-button' target='oce'>Ocean CM2.6</div>
+    </div>
+    <div id="toolbar">
+        <table width="100%" id="toolbarDataGrid" class="toolbar-table">
+            <tr>
+                <th class="dg-title" id="main-title">
+                    <div target-bind="toolbar">PolarGlobe: 4D Climate Data Visualization
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' pin>
+                    <canvas id='time-progressor' width='400' height='40'></canvas>
+                    <span>Data Control</span>
+                    <div id='date-view'></div>          
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntAniCtrl' class='cvsFunction' checked pin>
+                    <div>
+                        <div class='left'><input id='btnPlayPause' type="checkbox" name="Speed"></div>
+                        <div class='right'><input id='rngPlaybackSpeed' type='text' value=""/></div>
+                    </div>
+                    <div>
+						<div class='left'><div class="icheckbox_line-blue">Saved Events</div></div>
+                        <div class='right'>                  
+							<div class='tb-selectbox'>                  
+							<select id='selEvent' data-placeholder="Select an Event" class='tb-selection'>
+								<option selected>Select an Event</option>
+							</select>
+							</div>
+                        </div>
+					</div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' group="asr">
+                    <div id='swt_f_Pointcloud' content='cntPointcloud' class="onoffswitch" data="tempr" default></div>          
+                    <span>Arctic Temperature - PointCloud View</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntPointcloud' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Point Size</div></div>
+                        <div class='right'><input id='rngPCPointSize' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Layers Shown</div></div>
+                        <div class='right'><input id='rngPCLayer' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Layers Interval</div></div>
+                        <div class='right'><input id='rngPCHeight' type='text' value=""/></div>
+                    </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' group="asr">
+                    <div id='swt_f_VolRender' content='cntVolRender' class="onoffswitch" data="tempr"></div>          
+                    <span>Arctic Temperature - Volume Rendering View</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntVolRender' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Layers Shown</div></div>
+                        <div class='right'><input id='rngVRLayer' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Height</div></div>
+                        <div class='right'><input id='rngVRHeight' type='text' value=""/></div>
+                    </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' group="asr">
+                    <div id='swtVerticalProfile' content='cntVerticalProfile' class="onoffswitch" data="tempr"></div>
+                    <span>Arctic Temperature - Vertical Profile View</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntVerticalProfile' class='cvsFunction' checked>
+                        <table class='btn-table' style='padding-bottom:5px'><tr>
+                            <td><div id='btnVPStart' class='util-button'>Start Draw</div></td>
+                            <td><div id='btnVPEnd' class='util-button' disabled>Finish</div></td>
+                            <td><div id='btnVPCancel' class='util-button' disabled>Cancel</div></td>
+                        </tr></table>
+                        <div>
+                            <div class='left'><div class="icheckbox_line-blue">Height</div></div>
+                            <div class='right'><input id='rngVPHeight' type='text' value=""/></div>
+                        </div>
+                        <div>
+                            <div class='left'><div class="icheckbox_line-blue">Move Wall</div></div>
+                            <div class='right'><input id='rngVPMove' type='text' value=""/></div>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' group="asr">
+                    <div id='swt_f_Horizontal' content='cntHorizontal' class="onoffswitch" data="height"></div>          
+                    <span>Horizontal Section View</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntHorizontal' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Transparency</div></div>
+                        <div class='right'><input id='rngHSOpacity' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Layer Index</div></div>
+                        <div class='right'><input id='rngHSLayer' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Height</div></div>
+                        <div class='right'><input id='rngHSHeight' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Contour Intv</div></div>
+                        <div class='right'><input id='rngHSContourIntv' type='text' value=""/></div>
+                    </div>
+                    </div>
+                </th>
+            </tr>
+			<tr style="display: none">
+                <th class='func-title'>
+                    <div id='swt_f_Vector' content='cntVector' class="onoffswitch" data="windVector"></div>
+                    <span>Vector Data Particle Simulation View</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntVector' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Level</div></div>
+                        <div class='right'><input id='rngWindLevel' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Transparency</div></div>
+                        <div class='right'><input id='rngParticleTrans' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Particle Size</div></div>
+                        <div class='right'><input id='rngParticleSize' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><input id='btnParticlePause' type="checkbox" name="Speed"></div>
+                        <div class='right'><input id='rngParticleSpeed' type='text' value=""/></div>    
+                    </div>  
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Particle Num</div></div>
+                        <div class='right'>                  
+							<div class='tb-selectbox'>                  
+							<select id='selParticleNumber' data-placeholder="Filter Particle Number" class='tb-selection'>
+								<option selected>65 K</option>
+								<option>260 K</option>
+								<option>1 M</option>
+								<option>4 M</option>
+							</select>
+							</div>
+                        </div>
+                    </div>
+					<table class='btn-table' style='margin-top:18px'><tr>
+						<td><div id='btnSCStart' class='util-button'>Draw Box</div></td>
+						<td><div id='btnSCEnd' class='util-button' disabled>Finish</div></td>
+						<td><div id='btnSCCancel' class='util-button' disabled>Cancel</div></td>
+					</tr></table>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' group="asr">
+                    <div id='swt_v_Stream' content='cntStreamLine' class="onoffswitch" data="windVector"></div>          
+                    <span>Arctic Wind</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntStreamLine' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Layers Shown</div></div>
+                        <div class='right'><input id='rngSLLayer' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Height</div></div>
+                        <div class='right'><input id='rngSLHeight' type='text' value=""/></div>
+                    </div>
+                    </div>
+                </th>
+            </tr>   
+            <tr>
+                <th class='func-title' group="asr">                
+                    <div id='swtSubvolume' content='cntSubvolume' class="onoffswitch"></div>
+                    <span>Sub-volume View</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntSubvolume' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><input id='btnValue' type="checkbox" name="Value"></div>
+                        <div class='right'><input id='rngValue' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Region</div></div>
+                        <div class='right'>                  
+							<div class='tb-selectbox'>                  
+							<select id='selRegion' data-placeholder="Filter Region" class='tb-selection'>
+								<option selected>None</option>
+								<option>Alaska</option>
+								<option>Greenland</option>
+								<option>NorthEU</option>
+								<option>Draw Box</option>
+							</select>
+							</div>
+                        </div>
+                    </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' group="gfs">
+                    <div id='swt_v_GlobalWind' content='cntGlobalWind' class="onoffswitch" data="GlobalWind"></div>          
+                    <span>Global Wind - Past 2 Weeks</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntGlobalWind' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Layers Shown</div></div>
+                        <div class='right'><input id='rngGWLayer' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Height</div></div>
+                        <div class='right'><input id='rngGWHeight' type='text' value=""/></div>
+                    </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' group="gfs">
+                    <div id='swt_v_GlobalWindNow' content='cntGlobalWindNow' class="onoffswitch" data="GlobalWindNow" default></div>          
+                    <span>Global Wind - Now</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntGlobalWindNow' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Layers Shown</div></div>
+                        <div class='right'><input id='rngGWNLayer' type='text' value=""/></div>
+                    </div>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Height</div></div>
+                        <div class='right'><input id='rngGWNHeight' type='text' value=""/></div>
+                    </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class='func-title' group="oce">
+                    <div id='swt_v_Ocean' content='cntOceanCurve' class="onoffswitch" data="oceanCurrent" default></div>          
+                    <span>Global Ocean Current</span>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <div id='cntOceanCurve' class='cvsFunction' checked>
+                    <div>
+                        <div class='left'><div class="icheckbox_line-blue">Sea Depth</div></div>
+                        <div class='right'><input id='rngOCLayer' type='text' value=""/></div>
+                    </div>
+                    <div style="display: none">
+                        <div class='left'><div class="icheckbox_line-blue">Height</div></div>
+                        <div class='right'><input id='rngOCHeight' type='text' value=""/></div>
+                    </div>
+                    </div>
+                </th>
+            </tr>
+        </table>
+        <span class="fa fa-bar-chart toolbar-device td-left" id='icnStats'></span>
+        <span class='toolbar-text' style="font-size:.9em;padding-left:0" id='lblFPS'></span>
+        <span class="fa fa-expand toolbar-device td-right" onclick="$('.toolbar-table').toggle()"></span>
+        <span class="fa fa-compress toolbar-device td-right" onclick="$('.toolbar-table').toggle()"></span>
+        <span class="fa fa-arrows-alt toolbar-device td-right" onclick="toggleFullScreen()" title='Full Screen'></span>
+        <span class="fa fa-home toolbar-device td-right" onclick="resetCamera()" title='Reset Camera'></span>
+        <span class="fa fa-globe toolbar-device td-right" onclick="toggleRotation(this)" title='Toggle Rotation'></span>
+        <span class="fa fa-map toolbar-device td-right" title='Change Basemap' id='stbiChangeBasemap'></span>
+        <span class="fa fa-picture-o toolbar-device td-right" title='Toggle Legend' id='tbiLegendSwith'></span>
+        <span class="fa fa-search toolbar-device td-right" title='Investigate value' id='tbiPickValue' _disabled></span>
+        <span class="fa fa-cloud toolbar-device td-right" title='Event Saving' id='_tbiEventSave'></span>
+        <span class="fa fa-play toolbar-device td-right" onclick="$('#btnPlayPause').iCheck('toggle')"></span>
+        <span class="fa fa-pause toolbar-device td-right" onclick="$('#btnPlayPause').iCheck('toggle')"></span>
+		<div id='txtAddEvent' class='textbox'>
+			<span>Event Name:</span>
+			<input type='text' />
+			<span class='fa fa-check-circle'></span>
+		</div>
+        <div id='cvsStats'>
+			<div id='txtInfo'></div>
+		</div>
+    </div>
+
+    <div id="legendTable">
+        <svg id="vizLegend"></svg>
+		<div id="colorSel" style="display: none">
+			<div style="width:174px"> <!-- (60 + 4 - 7) * n + 5 - 2 -->
+				<p class='title'>Select Color Scheme</p>
+			</div>
+		</div>
+    </div>
+	<div id='btnColorScheme' alt='Cancel'>More Colors</div>
+
+    <img style='position:absolute;top:5px;right:5px' src="images/nsf_logo_c.png"></img>
+    <a style='position:absolute;top:80px;right:12px;color:#ddd' href='#' onclick='$("#about").removeAttr("hide")'>About us</a>
+    <a id='btnQuickStart' style='position:absolute;top:100px;right:6px;color:#ddd' href='#' onclick='runQuickStart()'>QuickStart</a>
+    <a style='position:absolute;top:120px;right:24px;color:#ddd' href="help/help.html" target="_blank">Help</a>
+    <div id='copyright'>Copyright@2018 Arizona State University</div>
+
+</body>
+</html>
